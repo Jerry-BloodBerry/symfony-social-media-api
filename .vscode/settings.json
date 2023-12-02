@@ -1,0 +1,5 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "junstyle.php-cs-fixer",
+  "editor.detectIndentation": true
+}
