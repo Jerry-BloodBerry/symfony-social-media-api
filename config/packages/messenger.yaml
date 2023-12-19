@@ -1,0 +1,27 @@
+framework:
+    messenger:
+        # Uncomment this (and the failed transport below) to send failed messages to this transport for later handling.
+        # failure_transport: failed
+        default_bus: command.bus
+        buses:
+            command.bus: ~
+            query.bus: ~
+        transports:
+            sync: 'sync://'
+            async: '%env(MESSENGER_TRANSPORT_DSN)%'
+
+        routing:
+            'App\Application\Post\Command\Message\CreatePostMessage': sync
+            'App\Application\Post\Query\Message\PostByIdQuery': sync
+            'App\Application\User\Command\Message\CreateUserMessage': sync
+            'App\Application\User\Query\Message\UserByIdQuery': sync
+        
+
+
+# when@test:
+#    framework:
+#        messenger:
+#            transports:
+#                # replace with your transport name here (e.g., my_transport: 'in-memory://')
+#                # For more Messenger testing tools, see https://github.com/zenstruck/messenger-test
+#                async: 'in-memory://'

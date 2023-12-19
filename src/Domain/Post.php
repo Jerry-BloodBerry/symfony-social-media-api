@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace App\Domain;
 
-use Ramsey\Uuid\Rfc4122\UuidV4;
+use Ramsey\Uuid\UuidInterface;
 
 class Post
 {
-  private UuidV4 $id;
+  private UuidInterface $id;
   private \DateTime $createdAt;
   private ?\DateTime $updatedAt = null;
   private string $content;
-  private UuidV4 $authorId;
+  private UuidInterface $authorId;
 
   private function __construct(
-    UuidV4 $id,
+    UuidInterface $id,
     \DateTime $createdAt,
     ?\DateTime $updatedAt,
-    UuidV4 $authorId,
+    UuidInterface $authorId,
     string $content
   ) {
     $this->id = $id;
@@ -29,25 +29,25 @@ class Post
   }
 
   public static function create(
-    UuidV4 $id,
+    UuidInterface $id,
     \DateTime $createdAt,
-    UuidV4 $authorId,
+    UuidInterface $authorId,
     string $content
   ): self {
     return new self($id, $createdAt, null, $authorId, $content);
   }
 
   public static function restore(
-    UuidV4 $id,
+    UuidInterface $id,
     \DateTime $createdAt,
     ?\DateTime $updatedAt,
-    UuidV4 $authorId,
+    UuidInterface $authorId,
     string $content
   ): self {
     return new self($id, $createdAt, $updatedAt, $authorId, $content);
   }
 
-  public function getId(): UuidV4
+  public function getId(): UuidInterface
   {
     return $this->id;
   }
@@ -72,7 +72,7 @@ class Post
     return $this->content;
   }
 
-  public function getAuthorId(): UuidV4
+  public function getAuthorId(): UuidInterface
   {
     return $this->authorId;
   }

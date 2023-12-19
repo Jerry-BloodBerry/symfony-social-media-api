@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Domain;
 
-use Ramsey\Uuid\Rfc4122\UuidV4;
+use Ramsey\Uuid\UuidInterface;
 
 class User
 {
-  private UuidV4 $id;
+  private UuidInterface $id;
   private string $username;
   private string $email;
   private \DateTime $createdAt;
@@ -16,7 +16,7 @@ class User
   private string $avatarUrl;
 
   private function __construct(
-    UuidV4 $id,
+    UuidInterface $id,
     string $username,
     string $email,
     string $avatarUrl,
@@ -32,7 +32,7 @@ class User
   }
 
   public static function create(
-    UuidV4 $id,
+    UuidInterface $id,
     string $username,
     string $email,
     string $avatarUrl,
@@ -42,7 +42,7 @@ class User
   }
 
   public static function restore(
-    UuidV4 $id,
+    UuidInterface $id,
     string $username,
     string $email,
     string $avatarUrl,
@@ -52,7 +52,7 @@ class User
     return new self($id, $username, $email, $avatarUrl, $createdAt, $updatedAt);
   }
 
-  public function getId(): UuidV4
+  public function getId(): UuidInterface
   {
     return $this->id;
   }
@@ -77,12 +77,12 @@ class User
     return $this->createdAt;
   }
 
-  public function getUpdatedAt(): \DateTime
+  public function getUpdatedAt(): ?\DateTime
   {
     return $this->updatedAt;
   }
 
-  public function setUpdatedAt(\DateTime $updatedAt): void
+  public function setUpdatedAt(?\DateTime $updatedAt): void
   {
     $this->updatedAt = $updatedAt;
   }
@@ -95,10 +95,5 @@ class User
   public function setAvatarUrl(string $avatarUrl): void
   {
     $this->avatarUrl = $avatarUrl;
-  }
-
-  public function equals(self $toCompare): bool
-  {
-    return $this->getId()->toString() === $toCompare->getId()->toString();
   }
 }
