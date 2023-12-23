@@ -44,7 +44,7 @@ class UserController extends BaseApiController
         );
         $user = $this->queryBus->handle(new UserByIdQuery($userId));
 
-        return $this->respondWithCreated($user, new UserTransformer());
+        return $this->respondWithCreated($user, new UserTransformer(), 'users');
     }
 
     #[Route('/{id}', requirements: ['id' => Requirement::UUID_V4], name: 'user_get', methods: ['GET'])]
@@ -52,8 +52,8 @@ class UserController extends BaseApiController
     {
         $user = $this->queryBus->handle(new UserByIdQuery(Uuid::fromString($id)));
         if (null == $user) {
-            return $this->respondWithNotFound();
+            return $this->respondWithNotFound('User not found.');
         }
-        return $this->respondWithItem($user, new UserTransformer());
+        return $this->respondWithItem($user, new UserTransformer(), 'users');
     }
 }

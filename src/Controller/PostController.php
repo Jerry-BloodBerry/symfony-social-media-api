@@ -43,7 +43,7 @@ class PostController extends BaseApiController
         );
         $post = $this->queryBus->handle(new PostByIdQuery($postId));
 
-        return $this->respondWithCreated($post, new PostTransformer());
+        return $this->respondWithCreated($post, new PostTransformer(), 'posts');
     }
 
     #[Route('/{id}', requirements: ['id' => Requirement::UUID_V4], name: 'post_get', methods: ['GET'])]
@@ -51,8 +51,8 @@ class PostController extends BaseApiController
     {
         $post = $this->queryBus->handle(new PostByIdQuery(Uuid::fromString($id)));
         if (null == $post) {
-            return $this->respondWithNotFound();
+            return $this->respondWithNotFound('Post not found.');
         }
-        return $this->respondWithItem($post, new PostTransformer());
+        return $this->respondWithItem($post, new PostTransformer(), 'posts');
     }
 }
