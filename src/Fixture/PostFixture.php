@@ -8,6 +8,7 @@ use App\Domain\Post;
 use Ramsey\Uuid\Uuid;
 use Faker\Factory;
 use Faker\Generator;
+use Ramsey\Uuid\UuidInterface;
 
 class PostFixture implements FixtureInterface
 {
@@ -28,7 +29,7 @@ class PostFixture implements FixtureInterface
     $randomUser = $this->userRepository->getRandom();
     for ($i = 0; $i < $count; $i++) {
       $post = Post::create(
-        Uuid::fromString($this->generateUuid()),
+        $this->generateUuid(),
         $this->generateDateTime(),
         $randomUser->getId(),
         $this->generateContent()
@@ -38,9 +39,9 @@ class PostFixture implements FixtureInterface
     }
   }
 
-  private function generateUuid(): string
+  private function generateUuid(): UuidInterface
   {
-    return $this->faker->uuid;
+    return Uuid::uuid4();
   }
 
   private function generateDateTime(): \DateTime

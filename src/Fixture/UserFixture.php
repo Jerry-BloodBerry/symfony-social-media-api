@@ -21,7 +21,7 @@ class UserFixture implements FixtureInterface
   {
     for ($i = 0; $i < $count; $i++) {
       $user = User::create(
-        Uuid::fromString($this->faker->uuid),
+        Uuid::uuid4(),
         $this->faker->userName,
         $this->faker->email,
         $this->faker->imageUrl(),
