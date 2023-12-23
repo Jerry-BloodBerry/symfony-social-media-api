@@ -47,9 +47,9 @@ class PostController extends BaseApiController
     }
 
     #[Route('/{id}', requirements: ['id' => Requirement::UUID_V4], name: 'post_get', methods: ['GET'])]
-    public function get(string $postId): JsonResponse
+    public function get(string $id): JsonResponse
     {
-        $post = $this->queryBus->handle(new PostByIdQuery(Uuid::fromString($postId)));
+        $post = $this->queryBus->handle(new PostByIdQuery(Uuid::fromString($id)));
         if (null == $post) {
             $this->respondWithNotFound();
         }
