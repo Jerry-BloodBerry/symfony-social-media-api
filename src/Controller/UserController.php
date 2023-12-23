@@ -52,7 +52,7 @@ class UserController extends BaseApiController
     {
         $user = $this->queryBus->handle(new UserByIdQuery(Uuid::fromString($id)));
         if (null == $user) {
-            $this->respondWithNotFound();
+            return $this->respondWithNotFound();
         }
         return $this->respondWithItem($user, new UserTransformer());
     }

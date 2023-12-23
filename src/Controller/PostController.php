@@ -51,7 +51,7 @@ class PostController extends BaseApiController
     {
         $post = $this->queryBus->handle(new PostByIdQuery(Uuid::fromString($id)));
         if (null == $post) {
-            $this->respondWithNotFound();
+            return $this->respondWithNotFound();
         }
         return $this->respondWithItem($post, new PostTransformer());
     }
