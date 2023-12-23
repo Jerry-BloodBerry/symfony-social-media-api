@@ -33,6 +33,23 @@ class DbalUserRepository implements UserRepositoryInterface
     $data = $result->fetchAssociative();
     return false === $data ? null : $this->userMapper->toEntity($data);
   }
+
+  /**
+   * @throws \RuntimeException
+   */
+  public function getRandom(): User
+  {
+    $sql = 'SELECT * FROM ' . UsersTable::TABLE_NAME .
+      ' OFFSET floor(random() * (SELECT count(*) FROM ' . UsersTable::TABLE_NAME . ')) LIMIT 1';
+    $statement = $this->connection->prepare($sql);
+    $result = $statement->executeQuery();
+    $data = $result->fetchAssociative();
+    if (false === $data) {
+      throw new \RuntimeException('No users found in the database.');
+    }
+    return $this->userMapper->toEntity($data);
+  }
+
   public function save(User $user): void
   {
     $builder = new QueryBuilder($this->connection);

@@ -6,6 +6,7 @@
 parameters:
 
 services:
+    Psr\Container\ContainerInterface: '@service_container'
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
@@ -25,6 +26,11 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
-
+    # Fixtures
+    App\Fixture\FixtureFactory: ~
+    App\Fixture\PostFixture:
+        public: true
+    App\Fixture\UserFixture:
+        public: true
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
