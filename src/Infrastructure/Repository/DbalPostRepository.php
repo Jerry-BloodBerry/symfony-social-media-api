@@ -69,7 +69,9 @@ class DbalPostRepository implements PostRepositoryInterface
       ->select('*')
       ->from(PostsTable::TABLE_NAME)
       ->where(PostsTable::AUTHOR_ID . ' = ?')
-      ->setParameter(1, $userId->toString());
+      ->setParameter(1, $userId->toString())
+      ->setMaxResults($limit)
+      ->setFirstResult($offset);
     $result = $builder->executeQuery();
     $posts = [];
     foreach ($result->fetchAllAssociative() as $data) {
