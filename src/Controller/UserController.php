@@ -47,6 +47,12 @@ class UserController extends BaseApiController
         return $this->respondWithCreated($user, new UserTransformer(), 'users');
     }
 
+    #[Route('/{id}/posts', requirements: ['id' => Requirement::UUID_V4], name: 'user_get_posts', methods: ['GET'])]
+    public function getUserPosts(string $id)
+    {
+
+    }
+
     #[Route('/{id}', requirements: ['id' => Requirement::UUID_V4], name: 'user_get', methods: ['GET'])]
     public function get(string $id): JsonResponse
     {
