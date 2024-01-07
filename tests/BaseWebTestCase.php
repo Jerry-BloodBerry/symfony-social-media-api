@@ -4,6 +4,7 @@ namespace App\Tests;
 
 use Doctrine\DBAL\Connection;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 use Testcontainer\Container\PostgresContainer;
@@ -11,7 +12,8 @@ use Testcontainer\Container\PostgresContainer;
 
 abstract class BaseWebTestCase extends WebTestCase
 {
-
+  // TODO: integrate DAMA/doctrine-bundle to clear the database for each test
+  // TODO: check verifying objects against JSON files
   /** @var PostgresContainer */
   protected static $postgresContainer;
 
@@ -26,10 +28,10 @@ abstract class BaseWebTestCase extends WebTestCase
     $postgresDatabaseSuffix = $_ENV['POSTGRES_DATABASE_SUFFIX'];
     $postgresPassword = $_ENV['POSTGRES_PASSWORD'];
 
-    // remember to pull the image before trying to run container if you have slow internet connection
     self::$postgresContainer = PostgresContainer::make($postgresVersion, $postgresPassword)
       ->withPostgresUser($postgresUser)
       ->withPostgresDatabase($postgresDatabase . $postgresDatabaseSuffix);
+    // remember to pull the image before trying to run container if you have slow internet connection
     self::$postgresContainer->run();
 
     self::updateDatabaseUrl(
@@ -67,12 +69,11 @@ abstract class BaseWebTestCase extends WebTestCase
       'php',
       'bin/console',
       'doctrine:migrations:migrate',
-      '--no-interaction' // This flag is important to prevent any prompts during the test execution
+      '--no-interaction',
     ]);
 
     $process->run();
 
-    // Check if the process was successful
     if (!$process->isSuccessful()) {
       throw new ProcessFailedException($process);
     }
@@ -81,5 +82,16 @@ abstract class BaseWebTestCase extends WebTestCase
   public static function tearDownAfterClass(): void
   {
     self::$postgresContainer->stop();
+  }
+
+  protected function assertJsonResponseHeaders(Response $response): void
+  {
+    $this->assertTrue(
+      $response->headers->contains(
+        'Content-Type',
+        'application/json'
+      ),
+      'the "Content-Type" header is "application/json"'
+    );
   }
 }

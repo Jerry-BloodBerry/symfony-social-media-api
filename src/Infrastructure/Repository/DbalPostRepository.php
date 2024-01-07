@@ -33,6 +33,25 @@ class DbalPostRepository implements PostRepositoryInterface
     $data = $result->fetchAssociative();
     return false === $data ? null : $this->postMapper->toEntity($data);
   }
+
+  /**
+   * @return Post[]
+   */
+  public function findMany(int $limit, int $offset): array
+  {
+    $builder = $this->connection->createQueryBuilder()
+      ->select('*')
+      ->from(PostsTable::TABLE_NAME)
+      ->setMaxResults($limit)
+      ->setFirstResult($offset);
+    $result = $builder->executeQuery();
+    $posts = [];
+    foreach ($result->fetchAllAssociative() as $data) {
+      $posts[] = $this->postMapper->toEntity($data);
+    }
+    return $posts;
+  }
+
   public function save(Post $post): void
   {
     $builder = new QueryBuilder($this->connection);
@@ -61,7 +80,7 @@ class DbalPostRepository implements PostRepositoryInterface
 
 
   /**
-   * @return array<Post>
+   * @return Post[]
    */
   public function getUserPosts(UuidInterface $userId, int $limit, int $offset): array
   {

@@ -4,12 +4,14 @@ namespace App\Controller;
 
 use App\Application\Post\Command\Message\CreatePostMessage;
 use App\Application\Post\Query\Message\PostByIdQuery;
+use App\Application\Post\Query\Message\PostsQuery;
 use App\Application\Service\CQRS\CommandBusInterface;
 use App\Application\Service\CQRS\QueryBusInterface;
 use App\Application\Transformer\PostTransformer;
 use App\Request\Post\CreatePostRequest;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Requirement\Requirement;
@@ -54,5 +56,15 @@ class PostController extends BaseApiController
             return $this->respondWithNotFound('Post not found.');
         }
         return $this->respondWithItem($post, new PostTransformer(), 'posts');
+    }
+
+    #[Route('', name: 'post_get_all', methods: ['GET'])]
+    public function getAll(
+    #[MapQueryParameter] int $page = 1,
+    #[MapQueryParameter] int $perPage = 30
+    ): JsonResponse {
+        $posts = $this->queryBus->handle(new PostsQuery($perPage, ($page - 1) * $perPage));
+
+        return $this->respondWithCollection($posts, new PostTransformer(), 'posts');
     }
 }

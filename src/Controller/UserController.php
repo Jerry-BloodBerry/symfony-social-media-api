@@ -60,7 +60,9 @@ class UserController extends BaseApiController
         if (null == $user) {
             return $this->respondWithNotFound('User not found.');
         }
-        $posts = $this->queryBus->handle(new PostsByUserIdQuery(Uuid::fromString($id), $perPage, ($page - 1) * $perPage));
+        $posts = $this->queryBus->handle(
+            new PostsByUserIdQuery(Uuid::fromString($id), $perPage, ($page - 1) * $perPage)
+        );
 
         return $this->respondWithCollection($posts, new PostTransformer(), 'posts');
     }

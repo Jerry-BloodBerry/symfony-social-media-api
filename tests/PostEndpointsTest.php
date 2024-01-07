@@ -29,18 +29,22 @@ class PostEndpointsTest extends BaseWebTestCase
 
     // then
     $this->assertEquals(201, $client->getResponse()->getStatusCode());
-
-    // Check if the content type is JSON
-    $this->assertTrue(
-      $client->getResponse()->headers->contains(
-        'Content-Type',
-        'application/json'
-      ),
-      'the "Content-Type" header is "application/json"'
-    );
-
-    // Check if the response content is JSON
+    $this->assertJsonResponseHeaders($client->getResponse());
     $this->assertJson($client->getResponse()->getContent());
+  }
 
+  public function testPostDatabaseShouldBeEmpty(): void
+  {
+    // given
+    $client = static::createClient();
+    // when
+    $client->request(method: 'GET', uri: '/api/post', server: ['ACCEPT' => 'application/json']);
+    // then
+    $this->assertEquals(200, $client->getResponse()->getStatusCode());
+    $this->assertJsonResponseHeaders($client->getResponse());
+    $content = $client->getResponse()->getContent();
+    $this->assertJson($content);
+    $posts = json_decode($content, true);
+    $this->assertEmpty($posts['data']);
   }
 }
