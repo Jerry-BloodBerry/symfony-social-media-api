@@ -9,14 +9,14 @@ use Ramsey\Uuid\UuidInterface;
 class Post
 {
   private UuidInterface $id;
-  private \DateTime $createdAt;
+  private \DateTimeImmutable $createdAt;
   private ?\DateTime $updatedAt = null;
   private string $content;
   private UuidInterface $authorId;
 
   private function __construct(
     UuidInterface $id,
-    \DateTime $createdAt,
+    \DateTimeImmutable $createdAt,
     ?\DateTime $updatedAt,
     UuidInterface $authorId,
     string $content
@@ -30,7 +30,7 @@ class Post
 
   public static function create(
     UuidInterface $id,
-    \DateTime $createdAt,
+    \DateTimeImmutable $createdAt,
     UuidInterface $authorId,
     string $content
   ): self {
@@ -39,7 +39,7 @@ class Post
 
   public static function restore(
     UuidInterface $id,
-    \DateTime $createdAt,
+    \DateTimeImmutable $createdAt,
     ?\DateTime $updatedAt,
     UuidInterface $authorId,
     string $content
@@ -52,7 +52,7 @@ class Post
     return $this->id;
   }
 
-  public function getCreatedAt(): \DateTime
+  public function getCreatedAt(): \DateTimeImmutable
   {
     return $this->createdAt;
   }

@@ -8,6 +8,7 @@ use App\Application\Post\Query\Message\PostsQuery;
 use App\Application\Service\CQRS\CommandBusInterface;
 use App\Application\Service\CQRS\QueryBusInterface;
 use App\Application\Transformer\PostTransformer;
+use App\Common\ClockInterface;
 use App\Request\Post\CreatePostRequest;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,14 +22,17 @@ class PostController extends BaseApiController
 {
     private readonly QueryBusInterface $queryBus;
     private readonly CommandBusInterface $commandBus;
+    private readonly ClockInterface $clock;
 
     public function __construct(
         QueryBusInterface $queryBus,
         CommandBusInterface $commandBus,
+        ClockInterface $clock
     ) {
         parent::__construct();
         $this->queryBus = $queryBus;
         $this->commandBus = $commandBus;
+        $this->clock = $clock;
     }
 
     #[Route('', methods: ['POST'], name: 'post_create')]
@@ -40,7 +44,7 @@ class PostController extends BaseApiController
                 $postId,
                 Uuid::fromString($request->authorId),
                 $request->content,
-                new \DateTime('now')
+                $this->clock->utcNow()
             )
         );
         $post = $this->queryBus->handle(new PostByIdQuery($postId));

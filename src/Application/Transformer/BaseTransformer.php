@@ -7,7 +7,7 @@ use IntlDateFormatter;
 
 class BaseTransformer extends TransformerAbstract
 {
-  protected function formatDateTime(\DateTime $dateTime): string
+  protected function formatDateTime(\DateTimeInterface $dateTime): string
   {
     $formatter = new IntlDateFormatter(
       'en_US', // Locale

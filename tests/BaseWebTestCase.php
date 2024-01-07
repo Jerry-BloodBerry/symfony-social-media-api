@@ -2,6 +2,7 @@
 
 namespace App\Tests;
 
+use App\Common\ClockInterface;
 use Doctrine\DBAL\Connection;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,6 +18,7 @@ abstract class BaseWebTestCase extends WebTestCase
 
   public static function setUpBeforeClass(): void
   {
+    parent::setUpBeforeClass();
     $postgresVersion = $_ENV['POSTGRES_VERSION'];
     $postgresUser = $_ENV['POSTGRES_USER'];
     $postgresDatabase = $_ENV['POSTGRES_DATABASE'];
@@ -76,6 +78,7 @@ abstract class BaseWebTestCase extends WebTestCase
 
   public static function tearDownAfterClass(): void
   {
+    parent::tearDownAfterClass();
     self::$postgresContainer->stop();
   }
 
@@ -88,5 +91,10 @@ abstract class BaseWebTestCase extends WebTestCase
       ),
       'the "Content-Type" header is "application/json"'
     );
+  }
+
+  protected function scrubUuids(string $json): string
+  {
+    return preg_replace('/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/', '<<scrubbed>>', $json);
   }
 }

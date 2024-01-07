@@ -11,7 +11,7 @@ class CreatePostMessage implements CommandInterface
     public readonly UuidInterface $id,
     public readonly UuidInterface $authorId,
     public readonly string $content,
-    public readonly \DateTime $createdAt
+    public readonly \DateTimeImmutable $createdAt
   ) {
 
   }

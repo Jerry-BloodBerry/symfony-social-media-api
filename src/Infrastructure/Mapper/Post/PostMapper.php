@@ -12,7 +12,7 @@ class PostMapper implements PostMapperInterface
   {
     return Post::restore(
       Uuid::fromString($row[PostsTable::ID]),
-      new \DateTime($row[PostsTable::CREATED_AT]),
+      new \DateTimeImmutable($row[PostsTable::CREATED_AT]),
       isset($row[PostsTable::UPDATED_AT]) ? new \DateTime($row[PostsTable::UPDATED_AT]) : null,
       Uuid::fromString($row[PostsTable::AUTHOR_ID]),
       $row[PostsTable::CONTENT]
