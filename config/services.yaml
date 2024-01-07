@@ -32,5 +32,8 @@ services:
         public: true
     App\Fixture\UserFixture:
         public: true
+    # Common
+    App\Application\Service\Clock: ~
+    App\Common\ClockInterface: '@App\Application\Service\Clock'
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

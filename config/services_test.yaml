@@ -1,0 +1,6 @@
+services:
+    _defaults:
+        public: true
+    App\Tests\FixedClock:
+        arguments: ['2023-01-01T00:00:00Z']
+    App\Common\ClockInterface: '@App\Tests\FixedClock'
