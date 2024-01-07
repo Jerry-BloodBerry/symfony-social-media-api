@@ -18,6 +18,7 @@ class PostEndpointsTest extends BaseWebTestCase
 
   public function setUp(): void
   {
+    parent::setUp();
     $this->userRepository = static::getContainer()->get(UserRepositoryInterface::class);
     $this->postRepository = static::getContainer()->get(PostRepositoryInterface::class);
     $this->clock = static::getContainer()->get(ClockInterface::class);
