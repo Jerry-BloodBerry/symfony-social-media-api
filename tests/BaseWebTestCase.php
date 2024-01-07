@@ -12,13 +12,8 @@ use Testcontainer\Container\PostgresContainer;
 
 abstract class BaseWebTestCase extends WebTestCase
 {
-  // TODO: integrate DAMA/doctrine-bundle to clear the database for each test
-  // TODO: check verifying objects against JSON files
-  /** @var PostgresContainer */
-  protected static $postgresContainer;
-
-  /** @var Connection */
-  protected static $connection;
+  protected static PostgresContainer $postgresContainer;
+  protected static Connection $connection;
 
   public static function setUpBeforeClass(): void
   {

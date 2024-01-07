@@ -22,15 +22,16 @@ class PostEndpointsTest extends BaseWebTestCase
     $userRepository->save($mockUser);
 
     // when
-    $client->request(method: 'POST', uri: '/api/post', content: json_encode([
+    $client->jsonRequest(method: 'POST', uri: '/api/post', parameters: [
       "content" => "This is my first post!",
       "authorId" => "3c4f8061-3298-4904-9453-e84aab36ac12"
-    ]), server: ['CONTENT_TYPE' => 'application/json']);
+    ]);
 
     // then
     $this->assertEquals(201, $client->getResponse()->getStatusCode());
     $this->assertJsonResponseHeaders($client->getResponse());
     $this->assertJson($client->getResponse()->getContent());
+    // TODO: check verifying objects against JSON files
   }
 
   public function testPostDatabaseShouldBeEmpty(): void
