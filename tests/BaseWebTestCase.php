@@ -2,7 +2,6 @@
 
 namespace App\Tests;
 
-use App\Common\ClockInterface;
 use Doctrine\DBAL\Connection;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
