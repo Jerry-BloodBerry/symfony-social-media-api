@@ -2,9 +2,9 @@
 
 namespace App\Fixture;
 
-use App\Domain\Interface\PostRepositoryInterface;
-use App\Domain\Interface\UserRepositoryInterface;
-use App\Domain\Post;
+use App\Post\Domain\PostRepositoryInterface;
+use App\User\Domain\UserRepositoryInterface;
+use App\Post\Domain\Post;
 use Ramsey\Uuid\Uuid;
 use Faker\Factory;
 use Faker\Generator;
@@ -30,7 +30,7 @@ class PostFixture implements FixtureInterface
     for ($i = 0; $i < $count; $i++) {
       $post = Post::create(
         $this->generateUuid(),
-        $this->generateDateTime(),
+        \DateTimeImmutable::createFromMutable($this->generateDateTime()),
         $randomUser->getId(),
         $this->generateContent()
       );

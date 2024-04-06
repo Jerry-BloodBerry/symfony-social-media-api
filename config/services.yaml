@@ -12,10 +12,10 @@ services:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
     _instanceof:
-        App\Application\Service\CQRS\CommandHandlerInterface:
+        App\Common\CQRS\CommandHandlerInterface:
             tags:
                 - { name: messenger.message_handler, bus: command.bus }
-        App\Application\Service\CQRS\QueryHandlerInterface:
+        App\Common\CQRS\QueryHandlerInterface:
             tags:
                 - { name: messenger.message_handler, bus: query.bus }
     # makes classes in src/ available to be used as services
@@ -33,7 +33,7 @@ services:
     App\Fixture\UserFixture:
         public: true
     # Common
-    App\Application\Service\Clock: ~
-    App\Common\ClockInterface: '@App\Application\Service\Clock'
+    App\Common\Clock: ~
+    App\Common\ClockInterface: '@App\Common\Clock'
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

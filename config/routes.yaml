@@ -3,3 +3,8 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+post_controllers:
+    resource:
+        path: ../src/Post/Api/Controller/
+        namespace: App\Post\Api\Controller
+    type: attribute

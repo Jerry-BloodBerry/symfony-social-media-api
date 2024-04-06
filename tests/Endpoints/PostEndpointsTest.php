@@ -3,8 +3,8 @@
 namespace App\Tests\Endpoints;
 
 use App\Common\ClockInterface;
-use App\Domain\Interface\PostRepositoryInterface;
-use App\Domain\Interface\UserRepositoryInterface;
+use App\Post\Domain\PostRepositoryInterface;
+use App\User\Domain\UserRepositoryInterface;
 use App\Tests\BaseWebTestCase;
 use App\Tests\Mocks\PostMocks;
 use App\Tests\Mocks\UserMocks;

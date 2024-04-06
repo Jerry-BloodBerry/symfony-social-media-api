@@ -2,7 +2,7 @@
 
 namespace App\Tests\Mocks;
 
-use App\Domain\User;
+use App\User\Domain\User;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 

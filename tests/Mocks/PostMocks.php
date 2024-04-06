@@ -3,7 +3,7 @@
 namespace App\Tests\Mocks;
 
 use App\Common\ClockInterface;
-use App\Domain\Post;
+use App\Post\Domain\Post;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 

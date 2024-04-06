@@ -2,8 +2,8 @@
 
 namespace App\Fixture;
 
-use App\Domain\Interface\UserRepositoryInterface;
-use App\Domain\User;
+use App\User\Domain\UserRepositoryInterface;
+use App\User\Domain\User;
 use Ramsey\Uuid\Uuid;
 use Faker\Factory;
 use Faker\Generator;
