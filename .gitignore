@@ -11,6 +11,8 @@
 
 ###> phpstan/phpstan ###
 phpstan.neon
+phpstan-tests.json
+phpstan.json
 ###< phpstan/phpstan ###
 
 ###> friendsofphp/php-cs-fixer ###
