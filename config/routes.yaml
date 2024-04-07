@@ -8,3 +8,8 @@ post_controllers:
         path: ../src/Post/Api/Controller/
         namespace: App\Post\Api\Controller
     type: attribute
+user_controllers:
+    resource:
+        path: ../src/User/Api/Controller/
+        namespace: App\User\Api\Controller
+    type: attribute
