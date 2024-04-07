@@ -20,6 +20,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	file \
 	gettext \
 	git \
+	libpq-dev \
+	librabbitmq-dev \
 	&& rm -rf /var/lib/apt/lists/*
 
 RUN set -eux; \
@@ -31,6 +33,7 @@ RUN set -eux; \
 		zip \
 		pdo \
 		pgsql \
+		amqp \
 	;
 
 # https://getcomposer.org/doc/03-cli.md#composer-allow-superuser

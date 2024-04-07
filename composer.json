@@ -6,9 +6,6 @@
     "require": {
         "php": ">=8.2",
         "ext-amqp": "*",
-        "ext-ctype": "*",
-        "ext-iconv": "*",
-        "ext-json": "*",
         "doctrine/doctrine-bundle": "^2.11",
         "doctrine/doctrine-migrations-bundle": "^3.3",
         "doctrine/orm": "^2.17",
