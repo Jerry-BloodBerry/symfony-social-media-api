@@ -40,11 +40,11 @@ jobs:
         run: timeout 120s sh -c 'docker compose up --wait --no-build --wait-timeout 120 || docker logs symfony-social-media-api-php-1'
       -
         name: Check HTTP reachability
-        run: curl -v --fail-with-body http://localhost:8080
+        run: curl -v --fail-with-body http://localhost:8080/health
       -
         name: Check HTTPS reachability
         if: false # Remove this line when the homepage will be configured, or change the path to check
-        run: curl -vk --fail-with-body https://localhost:8080
+        run: curl -vk --fail-with-body https://localhost:8080/health
       -
         name: Run PHPUnit
         if: false # Remove this line if PHPUnit is installed
