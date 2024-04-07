@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "19a48533b8d8849fc755dc24b476a44d",
+    "content-hash": "f5cadace28d7a47385545701778ca502",
     "packages": [
         {
             "name": "brick/math",
@@ -7173,59 +7173,6 @@
                 }
             ],
             "time": "2023-02-07T11:34:05+00:00"
-        },
-        {
-            "name": "shyim/testcontainer",
-            "version": "0.1.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/shyim/testcontainer.git",
-                "reference": "4c9f39a399031b8c477bb861e6a4e305940625cc"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/shyim/testcontainer/zipball/4c9f39a399031b8c477bb861e6a4e305940625cc",
-                "reference": "4c9f39a399031b8c477bb861e6a4e305940625cc",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">= 8.1",
-                "symfony/process": "^5.3|^6.0|^7.0"
-            },
-            "require-dev": {
-                "brianium/paratest": "^6.6",
-                "friendsofphp/php-cs-fixer": "^3.12",
-                "phpstan/extension-installer": "^1.2",
-                "phpstan/phpstan": "^1.8",
-                "phpstan/phpstan-phpunit": "^1.1",
-                "phpunit/phpunit": "^9.5"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Testcontainer\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Soner Sayakci",
-                    "email": "github@shyim.de"
-                }
-            ],
-            "description": "Testcontainer implementation in PHP",
-            "keywords": [
-                "docker",
-                "testcontainer"
-            ],
-            "support": {
-                "issues": "https://github.com/shyim/testcontainer/issues",
-                "source": "https://github.com/shyim/testcontainer/tree/0.1.1"
-            },
-            "time": "2024-03-16T18:09:51+00:00"
         },
         {
             "name": "symfony/browser-kit",

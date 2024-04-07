@@ -45,6 +45,11 @@ jobs:
         name: Check HTTPS reachability
         run: curl -vk --fail-with-body https://localhost/api/health
       -
+        name: Create test database
+        run: docker compose exec -T php bin/console -e test doctrine:database:create
+      -
+        name: Run migrations
+        run: docker compose exec -T php bin/console -e test doctrine:migrations:migrate --no-interaction
+      -
         name: Run PHPUnit
-        if: false # fix by removing shyim/testcontainer in favor of instantiating a test database
         run: docker compose exec -T php bin/phpunit
