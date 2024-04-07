@@ -10,8 +10,7 @@
 ###< symfony/framework-bundle ###
 
 ###> phpstan/phpstan ###
-phpstan.json
-phpstan-tests.json
+phpstan.neon
 ###< phpstan/phpstan ###
 
 ###> friendsofphp/php-cs-fixer ###
@@ -27,5 +26,4 @@ phpstan-tests.json
 ###> phpunit/phpunit ###
 /phpunit.xml
 .phpunit.result.cache
-.phpunit.cache
 ###< phpunit/phpunit ###

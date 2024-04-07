@@ -31,13 +31,15 @@ RUN set -eux; \
 		zip \
 		pdo \
 		pgsql \
-		pdo_pgsql \
 	;
 
 # https://getcomposer.org/doc/03-cli.md#composer-allow-superuser
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
 ###> recipes ###
+###> doctrine/doctrine-bundle ###
+RUN install-php-extensions pdo_pgsql
+###< doctrine/doctrine-bundle ###
 ###< recipes ###
 
 COPY --link frankenphp/conf.d/app.ini $PHP_INI_DIR/conf.d/

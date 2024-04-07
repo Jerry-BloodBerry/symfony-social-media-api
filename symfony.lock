@@ -4,11 +4,11 @@
         "recipe": {
             "repo": "github.com/symfony/recipes-contrib",
             "branch": "main",
-            "version": "4.0",
-            "ref": "2c920f73a217f30bd4a37833c91071f4d3dc1ecd"
+            "version": "7.2",
+            "ref": "896306d79d4ee143af9eadf9b09fd34a8c391b70"
         },
         "files": [
-            "config/packages/test/dama_doctrine_test_bundle.yaml"
+            "config/packages/dama_doctrine_test_bundle.yaml"
         ]
     },
     "doctrine/doctrine-bundle": {
@@ -17,7 +17,7 @@
             "repo": "github.com/symfony/recipes",
             "branch": "main",
             "version": "2.10",
-            "ref": "0db4b12b5df45f5122213b4ecd18733ab7fa7d53"
+            "ref": "c170ded8fc587d6bd670550c43dafcf093762245"
         },
         "files": [
             "config/packages/doctrine.yaml",
@@ -82,7 +82,7 @@
             "repo": "github.com/symfony/recipes",
             "branch": "main",
             "version": "5.3",
-            "ref": "da0c8be8157600ad34f10ff0c9cc91232522e047"
+            "ref": "1781ff40d8a17d87cf53f8d4cf0c8346ed2bb461"
         },
         "files": [
             "bin/console"
@@ -158,7 +158,7 @@
             "repo": "github.com/symfony/recipes",
             "branch": "main",
             "version": "6.3",
-            "ref": "1f5830c331065b6e4c9d5fa2105e322d29fcd573"
+            "ref": "a411a0480041243d97382cac7984f7dce7813c08"
         },
         "files": [
             ".env.test",
