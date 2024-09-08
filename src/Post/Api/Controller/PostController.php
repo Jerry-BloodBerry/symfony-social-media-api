@@ -2,6 +2,7 @@
 
 namespace App\Post\Api\Controller;
 
+use App\Post\Api\Request\UpdatePostRequest;
 use App\Post\Application\Query\Message\PostByIdQuery;
 use App\Post\Application\Query\Message\PostsQuery;
 use App\Common\CQRS\CommandBusInterface;
@@ -12,7 +13,10 @@ use App\Contract\Validator\ValidatorInterface;
 use App\Controller\BaseApiController;
 use App\Post\Application\Command\Message\CreatePostMessage;
 use App\Post\Api\Request\CreatePostRequest;
+use App\Post\Application\Command\Message\DeletePostMessage;
+use App\Post\Application\Command\Message\UpdatePostMessage;
 use App\Post\Domain\Post;
+use Ramsey\Uuid\Rfc4122\UuidV4;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -74,6 +78,7 @@ class PostController extends BaseApiController
             ->withGroups('post_details')
             ->toArray();
         $item = $this->serializer->serialize($post, 'json', $context);
+
         return $this->respondCreated($item, $this->generateUrl('post_get', ['id' => $postId->toString()]));
     }
 
@@ -89,6 +94,7 @@ class PostController extends BaseApiController
             ->withGroups('post_details')
             ->toArray();
         $item = $this->serializer->serialize($post, 'json', $context);
+
         return $this->respondWithItem($item);
     }
 
@@ -102,6 +108,43 @@ class PostController extends BaseApiController
             ->withGroups('post_list')
             ->toArray();
         $items = $this->serializer->serialize($posts, 'json', $context);
+
         return $this->respondWithCollection($items);
+    }
+
+    #[Route('/{id}', requirements: ['id' => Requirement::UUID_V4], name: 'post_update', methods: ['PUT'])]
+    public function update(string $id, Request $request): JsonResponse
+    {
+        try {
+            $postDto = $this->serializer->deserialize($request->getContent(), UpdatePostRequest::class, 'json');
+        } catch (\Exception $e) {
+            return $this->respondBadRequest($e->getMessage());
+        }
+        try {
+            $this->validator->validate($postDto);
+        } catch (ValidationFailedException $e) {
+            return $this->problemDetails($e->getViolations(), type: 'General/Post.ValidationFailed', title: 'Post data validation failed');
+        }
+        $postId = UuidV4::fromString($id);
+        $this->commandBus->dispatch(
+            new UpdatePostMessage(
+                $postId,
+                $postDto->content
+            )
+        );
+
+        return $this->respondNoContent();
+    }
+
+    #[Route('/{id}', requirements: ['id' => Requirement::UUID_V4], name: 'post_delete', methods: ['DELETE'])]
+    public function delete(string $id): JsonResponse
+    {
+        $postId = UuidV4::fromString($id);
+        $post = $this->queryBus->handle(new PostByIdQuery(Uuid::fromString($id)));
+        if (null == $post) {
+            return $this->respondNotFound('Post not found.');
+        }
+        $this->commandBus->dispatch(new DeletePostMessage($postId));
+        return $this->respondNoContent();
     }
 }

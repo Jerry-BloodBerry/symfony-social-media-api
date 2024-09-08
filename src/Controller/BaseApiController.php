@@ -5,6 +5,7 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 abstract class BaseApiController extends AbstractController
@@ -52,25 +53,23 @@ abstract class BaseApiController extends AbstractController
     return new JsonResponse(null, Response::HTTP_NO_CONTENT, $headers);
   }
 
-  protected function respondNotFound(string $message = 'Not Found'): JsonResponse
+  protected function respondNotFound(string $message = 'NotFound', string $detail = 'Resource was not found on the server.'): JsonResponse
   {
-    return $this->respondWithError('Not Found', $message, Response::HTTP_NOT_FOUND);
+    return $this->problemDetails(new ConstraintViolationList(), Response::HTTP_NOT_FOUND, 'Not Found', $message, $detail);
   }
 
-  protected function respondBadRequest(string $message = 'Bad Request'): JsonResponse
+  protected function respondBadRequest(string $message = 'BadRequest', string $detail = 'Request is considered invalid.'): JsonResponse
   {
-    return $this->respondWithError('Bad Request', $message, Response::HTTP_BAD_REQUEST);
+    return $this->problemDetails(new ConstraintViolationList(), Response::HTTP_NOT_FOUND, 'Bad Request', $message, $detail);
   }
 
   protected function problemDetails(
     ConstraintViolationListInterface $violations,
     int $status = Response::HTTP_BAD_REQUEST,
-    string $type = null,
-    string $title = "Validation Failed"
+    string $type = "Validation",
+    string $title = "Validation Failed",
+    string $detail = 'There were validation errors.'
   ): JsonResponse {
-    // Default type to a standard validation problem type
-    $type = $type ?: 'https://example.com/validation-error';
-
     // Format the violations to match RFC 7807 structure
     $errors = [];
     foreach ($violations as $violation) {
@@ -85,7 +84,7 @@ abstract class BaseApiController extends AbstractController
       'type' => $type,
       'title' => $title,
       'status' => $status,
-      'detail' => 'There were validation errors.',
+      'detail' => $detail,
       'violations' => $errors,
     ];
 

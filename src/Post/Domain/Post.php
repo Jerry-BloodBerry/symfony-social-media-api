@@ -68,9 +68,9 @@ class Post
     return $this->updatedAt;
   }
 
-  public function setUpdatedAt(\DateTime $updated_at): void
+  private function updateTimestamp(): void
   {
-    $this->updatedAt = $updated_at;
+    $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
   }
 
   public function getContent(): string
@@ -78,10 +78,10 @@ class Post
     return $this->content;
   }
 
-  public function update(string $content, \DateTime $updatedAt): void
+  public function updateContent(string $content): void
   {
     $this->content = $content;
-    $this->updatedAt = $updatedAt;
+    $this->updateTimestamp();
   }
 
   public function getAuthorId(): UuidInterface
