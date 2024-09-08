@@ -2,39 +2,24 @@
 
 namespace App\Controller;
 
-use League\Fractal\Manager;
-use League\Fractal\Resource\Collection;
-use League\Fractal\Resource\Item;
-use League\Fractal\Serializer\JsonApiSerializer;
-use League\Fractal\TransformerAbstract;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 abstract class BaseApiController extends AbstractController
 {
-  private Manager $fractal;
-
-  public function __construct()
-  {
-    $this->fractal = new Manager();
-    $this->fractal->setSerializer(new JsonApiSerializer());
-  }
 
   /**
    * @param array<string,string> $headers
    */
   protected function respondWithItem(
     mixed $data,
-    callable|TransformerAbstract|null $transformer,
-    string $resourceKey,
     int $status = Response::HTTP_OK,
-    array $headers = []
+    array $headers = [],
+    bool $json = true
   ): JsonResponse {
-    $resource = new Item($data, $transformer, $resourceKey);
-    $rootScope = $this->fractal->createData($resource);
-
-    return new JsonResponse($rootScope->toArray(), $status, $headers);
+    return new JsonResponse($data, $status, $headers, $json);
   }
 
   /**
@@ -42,35 +27,69 @@ abstract class BaseApiController extends AbstractController
    */
   protected function respondWithCollection(
     mixed $data,
-    callable|TransformerAbstract|null $transformer,
-    string $resourceKey,
     int $status = Response::HTTP_OK,
-    array $headers = []
+    array $headers = [],
+    bool $json = true
   ): JsonResponse {
-    $resource = new Collection($data, $transformer, $resourceKey);
-    $rootScope = $this->fractal->createData($resource);
-
-    return new JsonResponse($rootScope->toArray(), $status, $headers);
+    return new JsonResponse($data, $status, $headers, $json);
   }
 
   /**
    * @param array<string,string> $headers
    */
-  protected function respondWithCreated(
+  protected function respondCreated(
     mixed $data,
-    callable|TransformerAbstract|null $transformer,
-    string $resourceKey,
-    array $headers = []
+    string $location,
+    array $headers = [],
+    bool $json = true
   ): JsonResponse {
-    $resource = new Item($data, $transformer, $resourceKey);
-    $rootScope = $this->fractal->createData($resource);
-
-    return new JsonResponse($rootScope->toArray(), Response::HTTP_CREATED, $headers);
+    $headers['Location'] = $location;
+    return new JsonResponse($data, Response::HTTP_CREATED, $headers, $json);
   }
 
-  protected function respondWithNotFound(string $message = 'Not Found'): JsonResponse
+  protected function respondNoContent(array $headers = [])
+  {
+    return new JsonResponse(null, Response::HTTP_NO_CONTENT, $headers);
+  }
+
+  protected function respondNotFound(string $message = 'Not Found'): JsonResponse
   {
     return $this->respondWithError('Not Found', $message, Response::HTTP_NOT_FOUND);
+  }
+
+  protected function respondBadRequest(string $message = 'Bad Request'): JsonResponse
+  {
+    return $this->respondWithError('Bad Request', $message, Response::HTTP_BAD_REQUEST);
+  }
+
+  protected function problemDetails(
+    ConstraintViolationListInterface $violations,
+    int $status = Response::HTTP_BAD_REQUEST,
+    string $type = null,
+    string $title = "Validation Failed"
+  ): JsonResponse {
+    // Default type to a standard validation problem type
+    $type = $type ?: 'https://example.com/validation-error';
+
+    // Format the violations to match RFC 7807 structure
+    $errors = [];
+    foreach ($violations as $violation) {
+      $errors[] = [
+        'field' => $violation->getPropertyPath(),
+        'message' => $violation->getMessage(),
+      ];
+    }
+
+    // Build the response array
+    $data = [
+      'type' => $type,
+      'title' => $title,
+      'status' => $status,
+      'detail' => 'There were validation errors.',
+      'violations' => $errors,
+    ];
+
+    return new JsonResponse($data, $status);
   }
 
   protected function respondWithError(string $title, string $detail, int $status = 400): JsonResponse

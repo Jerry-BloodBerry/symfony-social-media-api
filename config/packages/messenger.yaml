@@ -11,10 +11,6 @@ framework:
             async: '%env(MESSENGER_TRANSPORT_DSN)%'
 
         routing:
-            'App\Post\Application\Command\Message\CreatePostMessage': sync
-            'App\Post\Application\Query\Message\PostByIdQuery': sync
-            'App\User\Application\Command\Message\CreateUserMessage': sync
-            'App\User\Application\Query\Message\UserByIdQuery': sync
         
 
 

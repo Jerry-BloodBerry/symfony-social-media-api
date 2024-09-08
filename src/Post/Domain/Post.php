@@ -5,13 +5,19 @@ declare(strict_types=1);
 namespace App\Post\Domain;
 
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 class Post
 {
+  #[Groups(['post_details', 'post_list'])]
   private UuidInterface $id;
+  #[Groups(['post_details'])]
   private \DateTimeImmutable $createdAt;
+  #[Groups(['post_details'])]
   private ?\DateTime $updatedAt = null;
+  #[Groups(['post_details', 'post_list'])]
   private string $content;
+  #[Groups(['post_details', 'post_list'])]
   private UuidInterface $authorId;
 
   private function __construct(
@@ -72,14 +78,15 @@ class Post
     return $this->content;
   }
 
+  public function update(string $content, \DateTime $updatedAt): void
+  {
+    $this->content = $content;
+    $this->updatedAt = $updatedAt;
+  }
+
   public function getAuthorId(): UuidInterface
   {
     return $this->authorId;
   }
 
-
-  public function equals(self $toCompare): bool
-  {
-    return $this->getId() == $toCompare->getId();
-  }
 }

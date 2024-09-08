@@ -63,7 +63,7 @@ class PostEndpointsTest extends BaseWebTestCase
     $content = $client->getResponse()->getContent();
     $this->assertJson($content);
     $posts = json_decode($content, true);
-    $this->assertEmpty($posts['data']);
+    $this->assertEmpty($posts);
   }
 
   public function testShouldRespondPostWhenExists(): void

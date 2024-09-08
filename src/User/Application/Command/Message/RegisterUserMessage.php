@@ -5,7 +5,7 @@ namespace App\User\Application\Command\Message;
 use App\Common\CQRS\CommandInterface;
 use Ramsey\Uuid\UuidInterface;
 
-class CreateUserMessage implements CommandInterface
+class RegisterUserMessage implements CommandInterface
 {
   public function __construct(
     public readonly UuidInterface $id,

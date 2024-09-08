@@ -62,9 +62,10 @@ class User
     return $this->username;
   }
 
-  public function setUsername(string $username): void
+  public function changeUsername(string $username): void
   {
     $this->username = $username;
+    $this->updateTimestamp();
   }
 
   public function getEmail(): string
@@ -72,9 +73,20 @@ class User
     return $this->email;
   }
 
+  public function changeEmail(string $email): void
+  {
+    $this->email = $email;
+    $this->updateTimestamp();
+  }
+
   public function getCreatedAt(): \DateTime
   {
     return $this->createdAt;
+  }
+
+  private function updateTimestamp(): void
+  {
+    $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
   }
 
   public function getUpdatedAt(): ?\DateTime
@@ -82,18 +94,15 @@ class User
     return $this->updatedAt;
   }
 
-  public function setUpdatedAt(?\DateTime $updatedAt): void
-  {
-    $this->updatedAt = $updatedAt;
-  }
 
   public function getAvatarUrl(): string
   {
     return $this->avatarUrl;
   }
 
-  public function setAvatarUrl(string $avatarUrl): void
+  public function updateProfileInfo(string $avatarUrl): void
   {
     $this->avatarUrl = $avatarUrl;
+    $this->updateTimestamp();
   }
 }

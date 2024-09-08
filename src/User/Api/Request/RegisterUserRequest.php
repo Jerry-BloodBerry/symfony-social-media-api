@@ -4,7 +4,7 @@ namespace App\User\Api\Request;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class CreateUserRequest
+class RegisterUserRequest
 {
   public function __construct(
     #[Assert\NotBlank]

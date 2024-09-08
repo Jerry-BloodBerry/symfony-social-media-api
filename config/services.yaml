@@ -35,5 +35,10 @@ services:
     # Common
     App\Common\Clock: ~
     App\Common\ClockInterface: '@App\Common\Clock'
+    # Contracts
+    App\Contract\SerializerInterface:
+        class: App\Service\SymfonySerializer
+    App\Contract\ValidatorInterface:
+        class: App\Service\SymfonyValidator
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

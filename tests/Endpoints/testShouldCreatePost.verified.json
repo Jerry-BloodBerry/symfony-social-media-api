@@ -1,12 +1,7 @@
 {
-  "data": {
-      "attributes": {
-          "authorId": "<<scrubbed>>",
-          "content": "This is my first post!",
-          "createdAt": "2023-01-01T00:00:00.000Z",
-          "updatedAt": null
-      },
-      "id": "<<scrubbed>>",
-      "type": "posts"
-  }
+  "authorId": "<<scrubbed>>",
+  "content": "This is my first post!",
+  "createdAt": "2022-12-31T23:00:00+00:00",
+  "id": "<<scrubbed>>",
+  "updatedAt": null
 }
