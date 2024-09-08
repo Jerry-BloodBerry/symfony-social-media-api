@@ -1,5 +1,7 @@
 <?php
 
+namespace App\User\Exception;
+
 use App\Common\Exception\EntityNotFoundException;
 use Ramsey\Uuid\UuidInterface;
 

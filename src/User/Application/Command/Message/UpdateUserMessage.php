@@ -1,4 +1,7 @@
 <?php
+
+namespace App\User\Application\Command\Message;
+
 use App\Common\CQRS\CommandInterface;
 use Ramsey\Uuid\UuidInterface;
 

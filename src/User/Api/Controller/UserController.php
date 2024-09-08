@@ -9,10 +9,12 @@ use App\Common\CQRS\QueryBusInterface;
 use App\Contract\Serializer\SerializerInterface;
 use App\Contract\Validator\ValidatorInterface;
 use App\Controller\BaseApiController;
+use App\User\Api\Request\UpdateUserRequest;
 use App\User\Application\Command\Message\RegisterUserMessage;
 use App\User\Application\Query\Message\UserByIdQuery;
 use App\User\Api\Request\RegisterUserRequest;
 use App\User\Application\Command\Message\DeleteUserMessage;
+use App\User\Application\Command\Message\UpdateUserMessage;
 use Ramsey\Uuid\Rfc4122\UuidV4;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,8 +23,6 @@ use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
-use UpdateUserMessage;
-use UpdateUserRequest;
 
 #[Route('/api/user')]
 class UserController extends BaseApiController

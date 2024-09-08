@@ -3,11 +3,11 @@
 namespace App\User\Application\Command\MessageHandler;
 
 use App\Common\CQRS\CommandHandlerInterface;
+use App\User\Application\Command\Message\UpdateUserMessage;
 use App\User\Domain\UserRepositoryInterface;
 use App\User\Domain\User;
+use App\User\Exception\UserNotFoundException;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use UpdateUserMessage;
-use UserNotFoundException;
 
 #[AsMessageHandler]
 class UpdateUserMessageHandler implements CommandHandlerInterface

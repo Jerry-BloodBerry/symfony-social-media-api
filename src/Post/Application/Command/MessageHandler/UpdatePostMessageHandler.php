@@ -5,7 +5,7 @@ namespace App\Post\Application\Command\MessageHandler;
 use App\Common\CQRS\CommandHandlerInterface;
 use App\Post\Application\Command\Message\UpdatePostMessage;
 use App\Post\Domain\PostRepositoryInterface;
-use PostNotFoundException;
+use App\Post\Exception\PostNotFoundException;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]

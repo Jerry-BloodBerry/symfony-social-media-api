@@ -1,4 +1,7 @@
 <?php
+
+namespace App\Post\Exception;
+
 use App\Common\Exception\EntityNotFoundException;
 use Ramsey\Uuid\UuidInterface;
 
