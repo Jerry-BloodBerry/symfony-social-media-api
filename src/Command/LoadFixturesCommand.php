@@ -28,7 +28,7 @@ class LoadFixturesCommand extends Command
     parent::__construct();
   }
 
-  protected function initialize(InputInterface $input, OutputInterface $output)
+  protected function initialize(InputInterface $input, OutputInterface $output): void
   {
     $this->fixtureFactory->registerFixture(UserFixture::class, 200);
     $this->fixtureFactory->registerFixture(PostFixture::class, 100);
