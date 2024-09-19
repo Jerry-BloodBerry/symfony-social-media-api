@@ -2,6 +2,7 @@
 
 namespace App\Post\Infrastructure\Repository;
 
+use App\Common\Event\DomainEventPublisherInterface;
 use App\Post\Domain\PostRepositoryInterface;
 use App\Post\Domain\Post;
 use App\Post\Infrastructure\Mapper\PostMapperInterface;
@@ -14,11 +15,13 @@ class DbalPostRepository implements PostRepositoryInterface
 {
   private readonly Connection $connection;
   private readonly PostMapperInterface $postMapper;
+  private readonly DomainEventPublisherInterface $domainEventPublisher;
 
-  public function __construct(Connection $connection, PostMapperInterface $postMapper)
+  public function __construct(Connection $connection, PostMapperInterface $postMapper, DomainEventPublisherInterface $domainEventPublisher)
   {
     $this->connection = $connection;
     $this->postMapper = $postMapper;
+    $this->domainEventPublisher = $domainEventPublisher;
   }
 
   public function find(UuidInterface $id): ?Post
@@ -67,6 +70,7 @@ class DbalPostRepository implements PostRepositoryInterface
       ->setParameters($this->postMapper->toArray($post));
 
     $builder->executeQuery();
+    $this->domainEventPublisher->publishMany(...$post->getDomainEvents());
   }
 
   public function delete(UuidInterface $postId): void
@@ -112,5 +116,6 @@ class DbalPostRepository implements PostRepositoryInterface
         PostsTable::ID => $post->getId()->toString(),
       ]);
     $builder->executeQuery();
+    $this->domainEventPublisher->publishMany(...$post->getDomainEvents());
   }
 }

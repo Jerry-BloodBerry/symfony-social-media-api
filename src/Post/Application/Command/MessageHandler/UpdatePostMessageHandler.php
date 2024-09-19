@@ -22,7 +22,7 @@ class UpdatePostMessageHandler implements CommandHandlerInterface
         if ($post === null) {
             throw new PostNotFoundException($message->id);
         }
-        $post->updateContent($message->content);
+        $post->update($message->content);
         $this->postRepository->save($post);
     }
 }

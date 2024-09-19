@@ -4,20 +4,14 @@ declare(strict_types=1);
 
 namespace App\Post\Domain;
 
+use App\Common\Entity;
 use Ramsey\Uuid\UuidInterface;
-use Symfony\Component\Serializer\Attribute\Groups;
 
-class Post
+class Post extends Entity
 {
-  #[Groups(['post_details', 'post_list'])]
-  private UuidInterface $id;
-  #[Groups(['post_details'])]
   private \DateTimeImmutable $createdAt;
-  #[Groups(['post_details'])]
   private ?\DateTime $updatedAt = null;
-  #[Groups(['post_details', 'post_list'])]
   private string $content;
-  #[Groups(['post_details', 'post_list'])]
   private UuidInterface $authorId;
 
   private function __construct(
@@ -27,7 +21,7 @@ class Post
     UuidInterface $authorId,
     string $content
   ) {
-    $this->id = $id;
+    parent::__construct($id);
     $this->createdAt = $createdAt;
     $this->updatedAt = $updatedAt;
     $this->authorId = $authorId;
@@ -40,7 +34,9 @@ class Post
     UuidInterface $authorId,
     string $content
   ): self {
-    return new self($id, $createdAt, null, $authorId, $content);
+    $post = new self($id, $createdAt, null, $authorId, $content);
+    $post->raise(new PostCreatedDomainEvent($id));
+    return $post;
   }
 
   public static function restore(
@@ -78,10 +74,11 @@ class Post
     return $this->content;
   }
 
-  public function updateContent(string $content): void
+  public function update(string $content): void
   {
     $this->content = $content;
     $this->updateTimestamp();
+    $this->raise(new PostUpdatedDomainEvent($this->id));
   }
 
   public function getAuthorId(): UuidInterface
