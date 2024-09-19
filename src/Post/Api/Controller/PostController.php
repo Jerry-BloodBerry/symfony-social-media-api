@@ -8,16 +8,23 @@ use App\Post\Application\Query\Message\PostsQuery;
 use App\Common\CQRS\CommandBusInterface;
 use App\Common\CQRS\QueryBusInterface;
 use App\Common\ClockInterface;
+use App\Common\Response\ProblemDetails;
 use App\Contract\Serializer\SerializerInterface;
 use App\Contract\Validator\ValidatorInterface;
 use App\Controller\BaseApiController;
 use App\Post\Application\Command\Message\CreatePostMessage;
 use App\Post\Api\Request\CreatePostRequest;
+use App\Post\Api\Response\ListPostResponse;
+use App\Post\Api\Response\SinglePostResponse;
 use App\Post\Application\Command\Message\DeletePostMessage;
 use App\Post\Application\Command\Message\UpdatePostMessage;
+use App\Post\Application\Query\Message\PostsByUserIdQuery;
 use App\Post\Domain\Post;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenApi\Attributes as OA;
 use Ramsey\Uuid\Rfc4122\UuidV4;
 use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
@@ -26,7 +33,6 @@ use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Serializer\Context\Normalizer\ObjectNormalizerContextBuilder;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
 
-#[Route('/api/post')]
 class PostController extends BaseApiController
 {
     private readonly QueryBusInterface $queryBus;
@@ -49,7 +55,22 @@ class PostController extends BaseApiController
         $this->validator = $validator;
     }
 
-    #[Route('', methods: ['POST'], name: 'post_create')]
+    #[Route('/api/post', methods: ['POST'], name: 'post_create')]
+    #[OA\RequestBody(content: new OA\JsonContent(ref: new Model(type: CreatePostRequest::class)))]
+    #[OA\Response(
+        response: 201,
+        description: 'Create post',
+        content: new OA\JsonContent(
+            type: 'object',
+            ref: new Model(type: SinglePostResponse::class)
+        )
+    )]
+    #[OA\Response(
+        response: 400,
+        description: 'Validation Failed',
+        content: new OA\JsonContent(ref: new Model(type: ProblemDetails::class))
+    )]
+    #[OA\Tag(name: 'Posts')]
     public function create(Request $request): JsonResponse
     {
         try {
@@ -73,16 +94,27 @@ class PostController extends BaseApiController
             )
         );
         $post = $this->queryBus->handle(new PostByIdQuery($postId));
-
-        $context = (new ObjectNormalizerContextBuilder())
-            ->withGroups('post_details')
-            ->toArray();
-        $item = $this->serializer->serialize($post, 'json', $context);
+        $item = $this->serializer->serialize(SinglePostResponse::from($post), 'json');
 
         return $this->respondCreated($item, $this->generateUrl('post_get', ['id' => $postId->toString()]));
     }
 
-    #[Route('/{id}', requirements: ['id' => Requirement::UUID_V4], name: 'post_get', methods: ['GET'])]
+    #[Route('/api/post/{id}', requirements: ['id' => Requirement::UUID_V4], name: 'post_get', methods: ['GET'])]
+    #[OA\Parameter(name: 'id', in: 'path', schema: new OA\Schema(type: 'string', format: 'uuid'), description: 'Post id')]
+    #[OA\Response(
+        response: 200,
+        description: 'Get post details',
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(ref: new Model(type: SinglePostResponse::class))
+        )
+    )]
+    #[OA\Response(
+        response: 404,
+        description: 'Not Found',
+        content: new OA\JsonContent(ref: new Model(type: ProblemDetails::class))
+    )]
+    #[OA\Tag(name: 'Posts')]
     public function get(string $id): JsonResponse
     {
         /** @var Post */
@@ -93,12 +125,21 @@ class PostController extends BaseApiController
         $context = (new ObjectNormalizerContextBuilder())
             ->withGroups('post_details')
             ->toArray();
-        $item = $this->serializer->serialize($post, 'json', $context);
+        $item = $this->serializer->serialize(SinglePostResponse::from($post), 'json', $context);
 
         return $this->respondWithItem($item);
     }
 
-    #[Route('', name: 'post_get_all', methods: ['GET'])]
+    #[Route('/api/post', name: 'post_get_all', methods: ['GET'])]
+    #[OA\Response(
+        response: 200,
+        description: 'Get all posts',
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(ref: new Model(type: ListPostResponse::class))
+        )
+    )]
+    #[OA\Tag(name: 'Posts')]
     public function getAll(
         #[MapQueryParameter] int $page = 1,
         #[MapQueryParameter] int $perPage = 30
@@ -112,7 +153,46 @@ class PostController extends BaseApiController
         return $this->respondWithCollection($items);
     }
 
-    #[Route('/{id}', requirements: ['id' => Requirement::UUID_V4], name: 'post_update', methods: ['PUT'])]
+    #[Route('/api/user/{id}/posts', requirements: ['id' => Requirement::UUID_V4], name: 'user_get_posts', methods: ['GET'])]
+    #[OA\Parameter(name: 'id', in: 'path', schema: new OA\Schema(type: 'string', format: 'uuid'), description: 'Post id')]
+    #[OA\Response(
+        response: 200,
+        description: 'Get user posts',
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(ref: new Model(type: ListPostResponse::class))
+        )
+    )]
+    #[OA\Tag(name: 'Posts')]
+    public function getUserPosts(
+        string $id,
+        #[MapQueryParameter] int $page = 1,
+        #[MapQueryParameter] int $perPage = 30
+    ): JsonResponse {
+        $posts = $this->queryBus->handle(
+            new PostsByUserIdQuery(Uuid::fromString($id), $perPage, ($page - 1) * $perPage)
+        );
+        $items = $this->serializer->serialize($posts, 'json');
+        return $this->respondWithCollection($items);
+    }
+
+    #[Route('/api/post/{id}', requirements: ['id' => Requirement::UUID_V4], name: 'post_update', methods: ['PUT'])]
+    #[OA\Parameter(name: 'id', in: 'path', schema: new OA\Schema(type: 'string', format: 'uuid'), description: 'Post id')]
+    #[OA\Response(
+        response: 204,
+        description: 'Post updated'
+    )]
+    #[OA\Response(
+        response: 400,
+        description: 'Validation Failed',
+        content: new OA\JsonContent(ref: new Model(type: ProblemDetails::class))
+    )]
+    #[OA\Response(
+        response: 404,
+        description: 'Not Found',
+        content: new OA\JsonContent(ref: new Model(type: ProblemDetails::class))
+    )]
+    #[OA\Tag(name: 'Posts')]
     public function update(string $id, Request $request): JsonResponse
     {
         try {
@@ -136,7 +216,18 @@ class PostController extends BaseApiController
         return $this->respondNoContent();
     }
 
-    #[Route('/{id}', requirements: ['id' => Requirement::UUID_V4], name: 'post_delete', methods: ['DELETE'])]
+    #[Route('/api/post/{id}', requirements: ['id' => Requirement::UUID_V4], name: 'post_delete', methods: ['DELETE'])]
+    #[OA\Parameter(name: 'id', in: 'path', schema: new OA\Schema(type: 'string', format: 'uuid'), description: 'Post id')]
+    #[OA\Response(
+        response: 204,
+        description: 'Delete post'
+    )]
+    #[OA\Response(
+        response: 404,
+        description: 'Not Found',
+        content: new OA\JsonContent(ref: new Model(type: ProblemDetails::class))
+    )]
+    #[OA\Tag(name: 'Posts')]
     public function delete(string $id): JsonResponse
     {
         $postId = UuidV4::fromString($id);

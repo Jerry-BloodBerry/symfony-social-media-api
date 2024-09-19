@@ -2,6 +2,7 @@
 
 namespace App\User\Api\Request;
 
+use OpenApi\Attributes as OA;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class RegisterUserRequest
@@ -12,6 +13,7 @@ class RegisterUserRequest
     public readonly string $username,
     #[Assert\NotBlank]
     #[Assert\Email]
+    #[OA\Property(type: 'string', format: 'email')]
     public readonly string $email
   ) {
   }

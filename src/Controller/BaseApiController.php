@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Common\Response\ProblemDetails;
+use App\Common\Response\ProblemDetailsViolation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -63,6 +65,11 @@ abstract class BaseApiController extends AbstractController
     return $this->problemDetails(new ConstraintViolationList(), Response::HTTP_NOT_FOUND, 'Bad Request', $message, $detail);
   }
 
+  protected function respondConflict(string $message = 'Conflict', string $detail = 'A conflict occurred on the server.'): JsonResponse
+  {
+    return $this->problemDetails(new ConstraintViolationList(), Response::HTTP_CONFLICT, 'Conflict', $message, $detail);
+  }
+
   protected function problemDetails(
     ConstraintViolationListInterface $violations,
     int $status = Response::HTTP_BAD_REQUEST,
@@ -73,22 +80,14 @@ abstract class BaseApiController extends AbstractController
     // Format the violations to match RFC 7807 structure
     $errors = [];
     foreach ($violations as $violation) {
-      $errors[] = [
-        'field' => $violation->getPropertyPath(),
-        'message' => $violation->getMessage(),
-      ];
+      $errors[] = new ProblemDetailsViolation(
+        $violation->getPropertyPath(),
+        $violation->getMessage()
+      );
     }
+    $problemDetails = new ProblemDetails($type, $title, $status, $detail, $errors);
 
-    // Build the response array
-    $data = [
-      'type' => $type,
-      'title' => $title,
-      'status' => $status,
-      'detail' => $detail,
-      'violations' => $errors,
-    ];
-
-    return new JsonResponse($data, $status);
+    return new JsonResponse($problemDetails, $status);
   }
 
   protected function respondWithError(string $title, string $detail, int $status = 400): JsonResponse

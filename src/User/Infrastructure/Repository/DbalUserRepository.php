@@ -4,9 +4,12 @@ namespace App\User\Infrastructure\Repository;
 
 use App\User\Domain\UserRepositoryInterface;
 use App\User\Domain\User;
+use App\User\Exception\DuplicateEmailsNotAllowedException;
+use App\User\Exception\DuplicateUsernamesNotAllowedException;
 use App\User\Infrastructure\Mapper\UserMapperInterface;
 use App\User\Infrastructure\Table\UsersTable;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Ramsey\Uuid\UuidInterface;
 
@@ -64,8 +67,19 @@ class DbalUserRepository implements UserRepositoryInterface
         UsersTable::UPDATED_AT => ':' . UsersTable::UPDATED_AT
       ])
       ->setParameters($this->userMapper->toArray($user));
+    try {
+      $builder->executeQuery();
+    } catch (UniqueConstraintViolationException $e) {
+      $message = $e->getMessage();
+      if (str_contains($message, 'users_username_key')) {
+        throw new DuplicateUsernamesNotAllowedException('User with this username already exists.');
+      } elseif (str_contains($message, 'users_email_key')) {
+        throw new DuplicateEmailsNotAllowedException('User with this email already exists.');
+      } else {
+        throw $e;
+      }
+    }
 
-    $builder->executeQuery();
   }
 
   public function delete(UuidInterface $userId): void
