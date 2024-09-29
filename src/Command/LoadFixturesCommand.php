@@ -17,8 +17,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 class LoadFixturesCommand extends Command
 {
-  protected static $defaultName = 'app:load-fixtures';
-
   private FixtureFactory $fixtureFactory;
 
   public function __construct(FixtureFactory $fixtureFactory)
