@@ -2,6 +2,7 @@
 
 namespace App\Fixture;
 
+use App\Post\Domain\Author;
 use App\Post\Domain\PostRepositoryInterface;
 use App\User\Domain\UserRepositoryInterface;
 use App\Post\Domain\Post;
@@ -31,7 +32,7 @@ class PostFixture implements FixtureInterface
       $post = Post::create(
         $this->generateUuid(),
         \DateTimeImmutable::createFromMutable($this->generateDateTime()),
-        $randomUser->getId(),
+        new Author($randomUser->getId(), $randomUser->getUsername()),
         $this->generateContent()
       );
 

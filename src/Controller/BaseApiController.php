@@ -55,12 +55,12 @@ abstract class BaseApiController extends AbstractController
     return new JsonResponse(null, Response::HTTP_NO_CONTENT, $headers);
   }
 
-  protected function respondNotFound(string $message = 'NotFound', string $detail = 'Resource was not found on the server.'): JsonResponse
+  protected function respondNotFound(string $message = 'Not Found', string $detail = 'Resource was not found on the server.'): JsonResponse
   {
     return $this->problemDetails(new ConstraintViolationList(), Response::HTTP_NOT_FOUND, 'Not Found', $message, $detail);
   }
 
-  protected function respondBadRequest(string $message = 'BadRequest', string $detail = 'Request is considered invalid.'): JsonResponse
+  protected function respondBadRequest(string $message = 'Bad Request', string $detail = 'Request is considered invalid.'): JsonResponse
   {
     return $this->problemDetails(new ConstraintViolationList(), Response::HTTP_NOT_FOUND, 'Bad Request', $message, $detail);
   }

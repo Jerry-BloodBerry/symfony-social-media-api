@@ -7,7 +7,7 @@ use Ramsey\Uuid\UuidInterface;
 
 class PostCreatedDomainEvent extends DomainEvent
 {
-    public const NAME = 'post.created';
+    public const NAME = 'domain.post.created';
     public readonly UuidInterface $postId;
     public function __construct(
         UuidInterface $postId

@@ -20,17 +20,17 @@ use App\Post\Application\Command\Message\DeletePostMessage;
 use App\Post\Application\Command\Message\UpdatePostMessage;
 use App\Post\Application\Query\Message\PostsByUserIdQuery;
 use App\Post\Domain\Post;
+use App\Post\Exception\AuthorNotFoundException;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 use Ramsey\Uuid\Rfc4122\UuidV4;
 use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
+use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
-use Symfony\Component\Serializer\Context\Normalizer\ObjectNormalizerContextBuilder;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
 
 class PostController extends BaseApiController
@@ -85,14 +85,21 @@ class PostController extends BaseApiController
         }
 
         $postId = Uuid::uuid4();
-        $this->commandBus->dispatch(
-            new CreatePostMessage(
-                $postId,
-                Uuid::fromString($postDto->authorId),
-                $postDto->content,
-                $this->clock->utcNow()
-            )
-        );
+        try {
+            $this->commandBus->dispatch(
+                new CreatePostMessage(
+                    $postId,
+                    Uuid::fromString($postDto->authorId),
+                    $postDto->content,
+                    $this->clock->utcNow()
+                )
+            );
+        } catch (HandlerFailedException $e) {
+            if ($e->getPrevious() instanceof AuthorNotFoundException) {
+                return $this->respondNotFound(detail: $e->getPrevious()->getMessage());
+            }
+            throw $e;
+        }
         $post = $this->queryBus->handle(new PostByIdQuery($postId));
         $item = $this->serializer->serialize(SinglePostResponse::from($post), 'json');
 
@@ -122,10 +129,7 @@ class PostController extends BaseApiController
         if (null == $post) {
             return $this->respondNotFound('Post not found.');
         }
-        $context = (new ObjectNormalizerContextBuilder())
-            ->withGroups('post_details')
-            ->toArray();
-        $item = $this->serializer->serialize(SinglePostResponse::from($post), 'json', $context);
+        $item = $this->serializer->serialize(SinglePostResponse::from($post), 'json');
 
         return $this->respondWithItem($item);
     }
@@ -145,10 +149,7 @@ class PostController extends BaseApiController
         #[MapQueryParameter] int $perPage = 30
     ): JsonResponse {
         $posts = $this->queryBus->handle(new PostsQuery($perPage, ($page - 1) * $perPage));
-        $context = (new ObjectNormalizerContextBuilder())
-            ->withGroups('post_list')
-            ->toArray();
-        $items = $this->serializer->serialize($posts, 'json', $context);
+        $items = $this->serializer->serialize(array_map(fn(Post $post) => ListPostResponse::from($post), $posts), 'json');
 
         return $this->respondWithCollection($items);
     }
@@ -172,7 +173,7 @@ class PostController extends BaseApiController
         $posts = $this->queryBus->handle(
             new PostsByUserIdQuery(Uuid::fromString($id), $perPage, ($page - 1) * $perPage)
         );
-        $items = $this->serializer->serialize($posts, 'json');
+        $items = $this->serializer->serialize(array_map(fn(Post $post) => ListPostResponse::from($post), $posts), 'json');
         return $this->respondWithCollection($items);
     }
 

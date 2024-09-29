@@ -6,6 +6,7 @@ use App\Common\Event\DomainEventPublisherInterface;
 use App\Post\Domain\PostRepositoryInterface;
 use App\Post\Domain\Post;
 use App\Post\Infrastructure\Mapper\PostMapperInterface;
+use App\Post\Infrastructure\Table\AuthorsTable;
 use App\Post\Infrastructure\Table\PostsTable;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
@@ -26,11 +27,9 @@ class DbalPostRepository implements PostRepositoryInterface
 
   public function find(UuidInterface $id): ?Post
   {
-    $builder = new QueryBuilder($this->connection);
-    $builder
-      ->select('*')
-      ->from(PostsTable::TABLE_NAME)
-      ->where(PostsTable::ID . ' = ?')
+    $builder = $this
+      ->basePostQuery()
+      ->where('p.' . PostsTable::ID . ' = ?')
       ->setParameter(1, $id->toString());
     $result = $builder->executeQuery();
     $data = $result->fetchAssociative();
@@ -42,9 +41,8 @@ class DbalPostRepository implements PostRepositoryInterface
    */
   public function findMany(int $limit, int $offset): array
   {
-    $builder = $this->connection->createQueryBuilder()
-      ->select('*')
-      ->from(PostsTable::TABLE_NAME)
+    $builder = $this
+      ->basePostQuery()
       ->setMaxResults($limit)
       ->setFirstResult($offset);
     $result = $builder->executeQuery();
@@ -88,10 +86,8 @@ class DbalPostRepository implements PostRepositoryInterface
    */
   public function getUserPosts(UuidInterface $userId, int $limit, int $offset): array
   {
-    $builder = $this->connection->createQueryBuilder()
-      ->select('*')
-      ->from(PostsTable::TABLE_NAME)
-      ->where(PostsTable::AUTHOR_ID . ' = ?')
+    $builder = $this->basePostQuery()
+      ->where('p.' . PostsTable::AUTHOR_ID . ' = ?')
       ->setParameter(1, $userId->toString())
       ->setMaxResults($limit)
       ->setFirstResult($offset);
@@ -101,6 +97,21 @@ class DbalPostRepository implements PostRepositoryInterface
       $posts[] = $this->postMapper->toEntity($data);
     }
     return $posts;
+  }
+
+  private function basePostQuery(): QueryBuilder
+  {
+    return $this->connection->createQueryBuilder()
+      ->select(join(',', [
+        'p.' . PostsTable::ID,
+        'p.' . PostsTable::AUTHOR_ID,
+        'a.' . AuthorsTable::USERNAME,
+        'p.' . PostsTable::CONTENT,
+        'p.' . PostsTable::CREATED_AT,
+        'p.' . PostsTable::UPDATED_AT
+      ]))
+      ->from(PostsTable::TABLE_NAME, 'p')
+      ->join('p', AuthorsTable::TABLE_NAME, 'a', 'p.' . PostsTable::AUTHOR_ID . ' = a.' . AuthorsTable::ID);
   }
 
   public function update(Post $post): void

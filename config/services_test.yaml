@@ -4,3 +4,5 @@ services:
     App\Tests\FixedClock:
         arguments: ['2023-01-01T00:00:00+00:00']
     App\Common\ClockInterface: '@App\Tests\FixedClock'
+    mercure.hub.default:
+        class: App\Tests\Stub\HubStub

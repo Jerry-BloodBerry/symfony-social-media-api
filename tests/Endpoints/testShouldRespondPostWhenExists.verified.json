@@ -1,5 +1,8 @@
 {
-  "authorId": "2415e8d9-85d9-4442-b517-c7d2712f6820",
+  "author": {
+    "id": "2415e8d9-85d9-4442-b517-c7d2712f6820",
+    "name": "mock_user"
+  },
   "content": "Mock post content",
   "createdAt": "2023-12-12T11:00:00+00:00",
   "id": "b369fc40-6baf-4d4d-bdf8-b067ac3d6a03",

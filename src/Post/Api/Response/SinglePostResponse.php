@@ -14,8 +14,7 @@ class SinglePostResponse
         public readonly \DateTimeImmutable $createdAt,
         public readonly ?\DateTime $updatedAt,
         public readonly string $content,
-        #[OA\Property(type: 'string', format: 'uuid')]
-        public readonly string $authorId
+        public readonly AuthorResponse $author
     ) {
     }
 
@@ -26,7 +25,7 @@ class SinglePostResponse
             $post->getCreatedAt(),
             $post->getUpdatedAt(),
             $post->getContent(),
-            $post->getAuthorId()->toString()
+            AuthorResponse::from($post->getAuthor())
         );
     }
 }

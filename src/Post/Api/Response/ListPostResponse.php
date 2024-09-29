@@ -12,8 +12,7 @@ class ListPostResponse
         #[OA\Property(type: 'string', format: 'uuid')]
         public readonly string $id,
         public readonly string $content,
-        #[OA\Property(type: 'string', format: 'uuid')]
-        public readonly string $authorId
+        public readonly AuthorResponse $author
     ) {
     }
 
@@ -22,7 +21,7 @@ class ListPostResponse
         return new self(
             $post->getId()->toString(),
             $post->getContent(),
-            $post->getAuthorId()->toString()
+            AuthorResponse::from($post->getAuthor())
         );
     }
 }

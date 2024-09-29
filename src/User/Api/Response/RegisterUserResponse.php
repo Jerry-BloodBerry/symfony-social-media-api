@@ -1,5 +1,7 @@
 <?php
 
+namespace App\User\Api\Response;
+
 use App\User\Domain\User;
 use OpenApi\Attributes as OA;
 

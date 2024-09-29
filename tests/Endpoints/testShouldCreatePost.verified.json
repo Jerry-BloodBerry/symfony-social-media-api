@@ -1,5 +1,8 @@
 {
-  "authorId": "<<scrubbed>>",
+  "author": {
+    "id": "<<scrubbed>>",
+    "name": "mock_user"
+  },
   "content": "This is my first post!",
   "createdAt": "2022-12-31T23:00:00+00:00",
   "id": "<<scrubbed>>",

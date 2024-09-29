@@ -12,29 +12,29 @@ class Post extends Entity
   private \DateTimeImmutable $createdAt;
   private ?\DateTime $updatedAt = null;
   private string $content;
-  private UuidInterface $authorId;
+  private Author $author;
 
   private function __construct(
     UuidInterface $id,
     \DateTimeImmutable $createdAt,
     ?\DateTime $updatedAt,
-    UuidInterface $authorId,
+    Author $author,
     string $content
   ) {
     parent::__construct($id);
     $this->createdAt = $createdAt;
     $this->updatedAt = $updatedAt;
-    $this->authorId = $authorId;
+    $this->author = $author;
     $this->content = $content;
   }
 
   public static function create(
     UuidInterface $id,
     \DateTimeImmutable $createdAt,
-    UuidInterface $authorId,
+    Author $author,
     string $content
   ): self {
-    $post = new self($id, $createdAt, null, $authorId, $content);
+    $post = new self($id, $createdAt, null, $author, $content);
     $post->raise(new PostCreatedDomainEvent($id));
     return $post;
   }
@@ -43,10 +43,10 @@ class Post extends Entity
     UuidInterface $id,
     \DateTimeImmutable $createdAt,
     ?\DateTime $updatedAt,
-    UuidInterface $authorId,
+    Author $author,
     string $content
   ): self {
-    return new self($id, $createdAt, $updatedAt, $authorId, $content);
+    return new self($id, $createdAt, $updatedAt, $author, $content);
   }
 
   public function getId(): UuidInterface
@@ -81,9 +81,9 @@ class Post extends Entity
     $this->raise(new PostUpdatedDomainEvent($this->id));
   }
 
-  public function getAuthorId(): UuidInterface
+  public function getAuthor(): Author
   {
-    return $this->authorId;
+    return $this->author;
   }
 
 }

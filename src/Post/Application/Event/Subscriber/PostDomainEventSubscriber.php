@@ -2,18 +2,20 @@
 
 namespace App\Post\Application\Event\Subscriber;
 
+use App\Post\Application\Event\PostCreatedEvent;
+use App\Post\Application\Event\PostUpdatedEvent;
 use App\Post\Domain\PostCreatedDomainEvent;
 use App\Post\Domain\PostUpdatedDomainEvent;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class PostDomainEventSubscriber implements EventSubscriberInterface
 {
-    private readonly LoggerInterface $logger;
+    private readonly EventDispatcherInterface $eventDispatcher;
 
-    public function __construct(LoggerInterface $logger)
+    public function __construct(EventDispatcherInterface $eventDispatcher)
     {
-        $this->logger = $logger;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     public static function getSubscribedEvents(): array
@@ -26,12 +28,12 @@ class PostDomainEventSubscriber implements EventSubscriberInterface
 
     public function onPostCreated(PostCreatedDomainEvent $event): void
     {
-        $this->logger->info("Post created with id: {$event->postId}");
+        $this->eventDispatcher->dispatch(new PostCreatedEvent($event->postId), PostCreatedEvent::NAME);
     }
 
     public function onPostUpdated(PostUpdatedDomainEvent $event): void
     {
-        $this->logger->info("Post updated with id: {$event->postId}");
+        $this->eventDispatcher->dispatch(new PostUpdatedEvent($event->postId), PostUpdatedEvent::NAME);
     }
 
 }
